@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Ball.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnDeathEvent );
+
 class UArrowComponent;
 
 UENUM()
@@ -31,7 +34,7 @@ struct FInitParams
 	
 	FInitParams()
 	{
-		Scale = 1.0f;
+		Scale = 0.5f;
 		Power = 1;
 		Speed = 500.0f;
 		MaxSpeed = 2500.0f;
@@ -58,24 +61,43 @@ private:
 	
 public:	
 	ABall();
+	
+	FORCEINLINE int GetPower() const { return Power; }
+	
+	void SetBallState( const EState NewState );
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathEvent OnDeathEvent;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Settings")
+	UMaterialInterface* PowerMaterial = nullptr;
 
 protected:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;	
+	virtual void Destroyed() override;
 	
 	/*
 	 * Передвижение актора
 	 */
 	UFUNCTION(BlueprintCallable, Category = Ball)
-	void Move( const float DeltaTime );
-	
-	void SetBallState( const EState NewState );
+	void Move( const float DeltaTime );		
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Settings")
 	FInitParams InitParams;
+	
+	// Bonus data
+	FTimerHandle TimerBallPower;
+	
+	UPROPERTY()
+	UMaterialInterface* DefaultMaterial = nullptr;
+	
+	void ResetBallPower();
+	void UpdateBallMaterial();
 
 public:		
-
+	void ChangeSpeed(const float Amount );
+	void ChangePower( const int32 Amount, const float BonusTime );
 };
