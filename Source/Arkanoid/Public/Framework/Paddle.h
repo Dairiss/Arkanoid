@@ -18,34 +18,37 @@ class ARKANOID_API APaddle : public APawn
     GENERATED_BODY()
 
 private:
-    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = true), Category = "Components")
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ), Category = "Components" )
     UBoxComponent* BoxCollider = nullptr;
     
-    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = true), Category = "Components")
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ), Category = "Components" )
     UStaticMeshComponent* StaticMesh = nullptr;
     
-    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = true), Category = "Components")
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ), Category = "Components" )
     UStaticMeshComponent* LeftStaticMesh = nullptr;
     
-    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = true), Category = "Components")
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ), Category = "Components" )
     UStaticMeshComponent* RightStaticMesh = nullptr;
     
-    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = true), Category = "Components")
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ), Category = "Components" )
     UArrowComponent* Arrow = nullptr;
+    
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true), Category= "Components")
+    UMaterialInterface* AdditionalBallMaterial = nullptr;
     
     UPROPERTY()
     ABall* CurrentBall = nullptr;
     
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess = true), Category= "Settings | Input")
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ), Category= "Settings | Input" )
     UInputMappingContext* DefaultMappingContext = nullptr;
     
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess = true), Category= "Settings | Input")
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ), Category= "Settings | Input" )
     UInputAction* EscapeAction = nullptr;
     
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess = true), Category= "Settings | Input")
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ), Category= "Settings | Input" )
     UInputAction* SpawnBallAction= nullptr;
     
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess = true), Category= "Settings | Input")
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ), Category= "Settings | Input" )
     UInputAction* MoveAction = nullptr;
     
     UPROPERTY()

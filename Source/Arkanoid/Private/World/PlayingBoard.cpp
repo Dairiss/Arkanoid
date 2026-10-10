@@ -5,6 +5,7 @@
 
 #include "Bonuses/BonusAbstract.h"
 #include "DSP/MidiNoteQuantizer.h"
+#include "Framework/ArkanoidGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "World/Block.h"
 
@@ -102,6 +103,12 @@ void APlayingBoard::SpawnBlockActors()
 void APlayingBoard::OnBlockDestroyed( AActor* DestroyedBlock )
 {
 	BlockActors.Remove( Cast<ABlock>( DestroyedBlock ) );
+
+	if( !BlockActors.Num() )
+	{
+		if( const auto GameMode = Cast<AArkanoidGameMode>(GetWorld()->GetAuthGameMode() ) )
+			GameMode->GameEnded( true );
+	}
 }// OnBlockDestroyed
 
 APlayingBoard::APlayingBoard()
@@ -152,7 +159,7 @@ TSubclassOf<ABonusAbstract> APlayingBoard::GetBonusClass()
 
 void APlayingBoard::BonusDestroyCubes( const int32 Amount )
 {
-	if( Amount <=0 )	
+	if( Amount <= 0 )	
 		return;
 	
 	const int32 NumToDestroy = FMath::Min(Amount, BlockActors.Num() );

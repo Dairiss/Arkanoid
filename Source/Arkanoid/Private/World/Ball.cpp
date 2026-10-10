@@ -3,14 +3,20 @@
 
 #include "World/Ball.h"
 #include "Components/ArrowComponent.h"
+#include "Components/AudioComponent.h"
 
 ABall::ABall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "StaticMesh" ) );
 	SetRootComponent( StaticMesh );
+	
 	ForwardArrow = CreateDefaultSubobject<UArrowComponent>( TEXT( "ForwardArrow" ) );
 	ForwardArrow->SetupAttachment( StaticMesh );
+	
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>( TEXT( "AudioComponent" ) );
+	AudioComponent->SetupAttachment( StaticMesh );
+	AudioComponent->SetAutoActivate( false );
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset( TEXT( "/Engine/BasicShapes/Sphere.Sphere" ) );
 	if( SphereMeshAsset.Succeeded() )	
@@ -73,6 +79,8 @@ void ABall::Move( const float DeltaTime )
 	
 	if( HitResult.bBlockingHit )
 	{
+		AudioComponent->Play();
+		
 		Direction = Direction - 2 * ( FVector::DotProduct( Direction, HitResult.Normal ) ) * HitResult.Normal;
 		Direction.Z = 0.0f;
 		Direction = Direction.GetSafeNormal();

@@ -8,6 +8,8 @@
 #include "MaterialHLSLTree.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "Framework/ArkanoidGameMode.h"
+#include "Framework/ArkanoidPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "World/Ball.h"
 
@@ -15,11 +17,10 @@
 void APaddle::SpawnBallLives()
 {
     UStaticMesh* Mesh = LoadObject<UStaticMesh>( nullptr, TEXT( "/Engine/BasicShapes/Sphere.Sphere" ) );
-    UMaterialInterface* Material = LoadObject<UMaterialInterface>( nullptr, TEXT( "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial" ) );
+    //UMaterialInterface* Material = LoadObject<UMaterialInterface>( nullptr, TEXT( "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial" ) );
     
-    if( !Mesh || !Material )
+    if( !Mesh )//|| !Material )
         return;
-
     
      for( auto BallLive : BallLives )
         BallLive->DestroyComponent();
@@ -34,7 +35,7 @@ void APaddle::SpawnBallLives()
             continue;
         
         NewMeshComponent->SetStaticMesh( Mesh );
-        NewMeshComponent->SetMaterial( 0, Material );
+        NewMeshComponent->SetMaterial( 0, AdditionalBallMaterial );
         NewMeshComponent->SetAbsolute( false,false, true );
         NewMeshComponent->SetWorldScale3D( FVector( 0.5f ) );
         NewMeshComponent->SetupAttachment( StaticMesh );
@@ -96,9 +97,9 @@ void APaddle::OnConstruction( const FTransform& Transform )
     
     SetActorScale3D( DefaultScale );
     BoxCollider->SetBoxExtent( FVector( 25.0f, 50.0f + 20.0f / DefaultScale.Y, 25.0f ) );
-    const FVector TmpScale = FVector(GetActorScale().X, GetActorScale().X, GetActorScale().Z);
-    LeftStaticMesh->SetWorldScale3D( TmpScale );
-    RightStaticMesh->SetWorldScale3D( TmpScale );
+    const FVector ActorsScale = FVector(GetActorScale().X, GetActorScale().X, GetActorScale().Z);
+    LeftStaticMesh->SetWorldScale3D( ActorsScale );
+    RightStaticMesh->SetWorldScale3D( ActorsScale );
 } // OnConstruction
 
 void APaddle::BeginPlay()
@@ -179,7 +180,11 @@ void APaddle::BonusSpawnAdditionalBall()
 
 void APaddle::ExitGame()
 {
-    UGameplayStatics::OpenLevel( GetWorld(), "Menu", true );    
+    //UGameplayStatics::OpenLevel( GetWorld(), "Menu", true );    
+    if( const auto PlayerController = Cast<AArkanoidPlayerController>(Controller) )
+    {
+        PlayerController->ExitButtonPressed();
+    }
 } // ExitGame
 
 void APaddle::PushBall()
@@ -225,11 +230,16 @@ void APaddle::BallIsDead()
     CurrentBall = nullptr;
     Lives = FMath::Max( Lives - 1,0 );
 
-    if( !Lives )
-        return;
-    
-    SpawnBall();    
-    BallLives[Lives - 1]->DestroyComponent();
-    BallLives.RemoveAt( Lives - 1 );
-    UpdateBallLivesLocation();
+    if( Lives )
+    {
+        SpawnBall();    
+        BallLives[Lives - 1]->DestroyComponent();
+        BallLives.RemoveAt( Lives - 1 );
+        UpdateBallLivesLocation();
+    }
+    else
+    {
+        if( const auto GameMode = Cast<AArkanoidGameMode>(GetWorld()->GetAuthGameMode()) )
+            GameMode->GameEnded( false );
+    }
 } // BallIsDead

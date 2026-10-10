@@ -5,6 +5,7 @@
 
 #include "Bonuses/BonusAbstract.h"
 #include "Components/LifeComponent.h"
+#include "Framework/ArkanoidPlayerState.h"
 #include "World/Ball.h"
 
 // Sets default values
@@ -42,6 +43,17 @@ void ABlock::NotifyHit( class UPrimitiveComponent* MyComp, AActor* Other, class 
 			{
 				if( BonusClass && GetWorld() )
 					GetWorld()->SpawnActor<ABonusAbstract>( BonusClass, GetActorLocation(), GetActorRotation() );
+
+				//  auto tmp = GetWorld()->GetGameState<AArkanoidGameState>();
+				/*
+				 *for(Aplayer* PlayerState : GameState->PlayerArray)
+				 *if(PlayerState)
+				 *auto player = Cast<APlayerContoller>(PlayerState->GetPlayerContoller());
+				 */
+				if( const auto Pawn = Cast<APawn>( Other->GetOwner() ) )
+					if( auto PlayerState = Cast<AArkanoidPlayerState>(Pawn->GetPlayerState() ) )
+						PlayerState->ChangePlayerScore( ScoreByLife * MaxLife );
+								
 				Destroy();
 			}
 			else
@@ -58,7 +70,7 @@ void ABlock::Init( const FVector NewScale, const int32 LifeAmount, const TSubcla
 	SetActorScale3D( NewScale );
 	BonusClass = NewBonusClass;
 	LifeComponent->SetLife( LifeAmount );
-	
+	MaxLife = LifeAmount;
 	
 	if( LifeMaterials.IsValidIndex( LifeComponent->GetLife() - 1 ) )		
 		StaticMesh->SetMaterial( 0,LifeMaterials[LifeComponent->GetLife() - 1] );	

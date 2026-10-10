@@ -25,10 +25,13 @@ struct FInitParams
 	
 	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Start size"))
 	float Scale;
+	
 	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Start power"))
 	int32 Power;
+	
 	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Start speed"))
 	float Speed;
+	
 	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Max speed"))
 	float MaxSpeed;
 	
@@ -48,11 +51,14 @@ class ARKANOID_API ABall : public AActor
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= Components, meta = (AllowPrivateAccess = true) )
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= Components, meta = (AllowPrivateAccess = "true" ) )
 	UStaticMeshComponent* StaticMesh = nullptr;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= Components, meta = (AllowPrivateAccess = true) )
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= Components, meta = (AllowPrivateAccess = "true" ) )
 	UArrowComponent* ForwardArrow = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= Components, meta = (AllowPrivateAccess = "true" ) )
+	UAudioComponent* AudioComponent = nullptr;
 	
 	int32 Power = 1;
 	float Speed = 0.0f;
